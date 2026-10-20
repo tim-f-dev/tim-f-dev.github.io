@@ -4,23 +4,377 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>tim-f-dev.github.io</title>
-    <meta name="description" content="GitHub page under construction, with a link to the Leimersheim weather dashboard.">
+    <link rel="icon" type="image/svg+xml" href="bumper-car.svg">
+    <meta name="description" content="Tim Fischer's projects: Quizzler, Musikverein Leimersheim, football-ics, and a Grafana weather dashboard.">
     <style>
       * { box-sizing: border-box; }
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #f3f6fa; color: #18283c; font-family: system-ui, sans-serif; }
-      main { width: 100%; max-width: 660px; padding: clamp(24px, 6vw, 56px); border: 1px solid #dce3ec; border-radius: 20px; background: white; box-shadow: 0 16px 50px #18283c0a; }
-      h1 { margin: 0 0 16px; font-size: clamp(24px, 5vw, 36px); overflow-wrap: anywhere; letter-spacing: -.04em; }
-      p { margin: 0 0 32px; color: #58677a; line-height: 1.6; }
+      html { overflow: hidden; }
+      body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; background: #f3f6fa; color: #18283c; font-family: system-ui, sans-serif; }
+      .cards { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 28px; width: 100%; max-width: 960px; }
+      .card { flex-shrink: 0; padding: 22px; border: 1px solid #dce3ec; border-radius: 20px; background: white; box-shadow: 0 16px 50px #18283c0a; }
+      .intro { width: 330px; min-height: 150px; }
+      .quizzler { width: 240px; min-height: 135px; background: #eff6ff; }
+      .club { width: 265px; min-height: 155px; background: #f0fdf4; }
+      .scraper { width: 220px; min-height: 145px; background: #faf5ff; }
+      .weather { width: 290px; min-height: 125px; background: #fffbeb; }
+      .intro-row { display: flex; justify-content: center; align-items: center; gap: 28px; width: 100%; }
+      .profile, .photo { width: 112px; height: 112px; min-height: 0; padding: 12px; text-align: center; }
+      .photo { width: 160px; height: auto; aspect-ratio: 856 / 925; padding: 0; overflow: hidden; border: 3px solid #94a3b8; }
+      .portrait { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; }
+      .profile a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 100%; }
+      .github-icon { width: 36px; height: 36px; }
+      h2 { margin: 0 0 8px; font-size: 19px; letter-spacing: -.025em; }
+      .card p { margin-bottom: 10px; font-size: 14px; }
+      .profile a { font-size: 13px; }
+      @media (max-width: 600px) {
+        body { padding: 12px 12px 48px; }
+        .cards { gap: 12px; }
+        .card { padding: 14px; }
+        .intro { width: 54%; min-height: 125px; }
+        .quizzler { width: 40%; min-height: 105px; }
+        .club { width: 47%; min-height: 115px; }
+        .scraper { width: 47%; min-height: 100px; }
+        .weather { width: 54%; min-height: 115px; }
+        .intro-row { gap: 12px; }
+        .card.profile, .card.photo { width: 90px; height: 90px; min-height: 0; }
+        .card.photo { width: 120px; height: auto; padding: 0; }
+        .card.profile { padding: 10px; }
+        h1 { font-size: 18px; }
+        h2 { font-size: 16px; }
+        .card a, .card p { font-size: 12px; }
+      }
+      h1 { margin: 0 0 12px; font-size: 22px; overflow-wrap: anywhere; letter-spacing: -.04em; }
+      .site-icon { display: block; width: 100px; height: 120px; margin-bottom: 24px; cursor: pointer; touch-action: none; user-select: none; z-index: 2; }
+      .site-icon:focus-visible { outline: 3px solid #175cd3; outline-offset: 4px; border-radius: 20px; }
+      .driving-hint { margin: 0 0 4px; text-align: center; font-size: 12px; pointer-events: none; }
+      @media (prefers-reduced-motion: reduce) { main { scroll-behavior: auto; } }
+      p { margin: 0 0 16px; color: #58677a; line-height: 1.6; }
       a { display: inline-block; color: #175cd3; font-weight: 600; line-height: 1.6; text-underline-offset: 4px; }
       a:hover { color: #103e91; }
       a:focus-visible { outline: 3px solid #175cd3; outline-offset: 6px; border-radius: 2px; }
+      .mobile-play, .exit-play, .mobile-intro { display: none; }
+      .profile-row { display: contents; }
+      .game-weather-title { display: none; }
+      .mobile-play, .exit-play { border: 0; border-radius: 12px; background: #18283c; color: white; font: 600 15px system-ui; padding: 14px 20px; cursor: pointer; }
+      @media (max-width: 600px) {
+        html { overflow: auto; }
+        body { min-height: 100svh; justify-content: flex-start; padding: 32px 20px; gap: 24px; }
+        body > .site-icon, .driving-hint, .desktop-intro { display: none; }
+        .mobile-intro, .mobile-play { display: block; }
+        .mobile-play { padding: 0; background: transparent; color: #58677a; font-size: 12px; text-align: center; }
+        .mobile-play img { display: block; width: 80px; height: 96px; margin: 4px auto 0; }
+        .cards { flex-direction: column; gap: 20px; }
+        .intro-row { gap: 16px; align-items: center; }
+        .card.intro { flex: 1; width: auto; min-height: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+        .intro h1 { font-size: 24px; }
+        .card.intro p { font-size: 15px; }
+        .card.photo { width: 100px; height: auto; }
+        .card.quizzler, .card.club, .card.scraper, .card.weather { width: 100%; min-height: 140px; padding: 24px; }
+        .card h2 { font-size: 21px; }
+        .card p, .card a { font-size: 15px; }
+        .card.profile { align-self: flex-start; width: 100px; height: 100px; }
+        .profile-row { display: flex; align-items: center; justify-content: flex-start; gap: 32px; width: 100%; }
+        .card.profile a { font-size: 13px; }
+        html.playing { overflow: hidden; }
+        .playing body { height: 100dvh; min-height: 0; padding: 64px 12px 12px; gap: 0; overflow: hidden; }
+        .playing .mobile-play { display: none; }
+        .playing .card.exit-play { display: grid; place-content: center; justify-self: center; width: 76px; height: 76px; min-height: 0; padding: 10px; background: #18283c; color: white; cursor: pointer; }
+        .exit-play svg { width: 30px; height: 30px; margin: 0 auto 3px; }
+        .exit-play span { font-size: 11px; }
+        .playing .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 112px)); justify-content: space-around; gap: 22px; margin-top: 125px; }
+        .playing .profile-row { display: contents; }
+        .playing .intro-row { display: contents; }
+        .playing .card { width: 100%; height: 82px; min-height: 0; padding: 10px; border: 1px solid #dce3ec; border-radius: 20px; background: white; box-shadow: 0 8px 24px #18283c0a; }
+        .playing .card.intro p, .playing .card p { display: none; }
+        .playing .card h1, .playing .card h2 { font-size: 15px; margin-bottom: 6px; }
+        .playing .card a { font-size: 12px; }
+        .playing .card.photo { width: 76px; height: 82px; padding: 0; justify-self: center; }
+        .playing .card.profile { width: 82px; height: 82px; }
+        .playing .card.quizzler { background: #eff6ff; }
+        .playing .card.club { background: #f0fdf4; }
+        .playing .card.scraper { background: #faf5ff; }
+        .playing .card.weather { background: #fffbeb; }
+        .playing .portfolio-weather-title { display: none; }
+        .playing .game-weather-title { display: inline; }
+        .playing body > .site-icon { display: block; position: fixed; left: calc(50% - 50px); top: 64px; margin: 0; }
+      }
     </style>
   </head>
   <body>
-    <main>
-      <h1>tim-f-dev.github.io</h1>
-      <p>github page, still under construction</p>
-      <a lang="de" target="_blank" rel="noopener noreferrer" href="https://politemousse2175.grafana.net/public-dashboards/08a0f6f161c04292a4080f23daa900f7">Grafana Dashboard mit dem Leimersheimer Wetter ↗</a>
+    <p class="driving-hint">click me</p>
+    <img class="site-icon" src="bumper-car.svg" alt="Blue bumper car viewed from above. Click to drive." role="button" tabindex="0" aria-pressed="false" draggable="false" width="100" height="120">
+    <main class="cards">
+      <div class="intro-row">
+      <section class="card intro">
+        <h1>Welcome, I’m Tim Fischer.</h1>
+        <p class="desktop-intro">This is my little corner of GitHub, where I share websites, side projects, and things I’m experimenting with. Feel free to look around and bump into something interesting.</p>
+        <p class="mobile-intro">Websites, side projects, and things I’m experimenting with.</p>
+      </section>
+      <section class="card photo" aria-label="Portrait of Tim Fischer">
+        <img class="portrait" src="portrait.png" alt="Tim Fischer" width="160" height="160" draggable="false">
+      </section>
+      </div>
+      <section class="card quizzler">
+        <h2>Quizzler</h2>
+        <p>Trivia website</p>
+        <a href="https://github.com/tim-f-dev/quizzler" target="_blank" rel="noopener noreferrer">View project ↗</a>
+      </section>
+      <section class="card club">
+        <h2>Musikverein Leimersheim</h2>
+        <p>Classical website</p>
+        <a href="https://mv-leimersheim.de/" target="_blank" rel="noopener noreferrer">Visit website ↗</a>
+      </section>
+      <section class="card scraper">
+        <h2>football-ics</h2>
+        <p>Webscraper</p>
+        <a href="https://github.com/tim-f-dev/football-ics" target="_blank" rel="noopener noreferrer">View project ↗</a>
+      </section>
+      <section class="card weather">
+        <h2><span class="portfolio-weather-title">Weather Karlsruhe</span><span class="game-weather-title">Weather</span></h2>
+        <p>Grafana dashboard</p>
+        <a href="https://politemousse2175.grafana.net/public-dashboards/08a0f6f161c04292a4080f23daa900f7" target="_blank" rel="noopener noreferrer">Open dashboard ↗</a>
+      </section>
+      <div class="profile-row">
+      <section class="card profile" aria-label="GitHub profile">
+        <a href="https://github.com/tim-f-dev" target="_blank" rel="noopener noreferrer" aria-label="tim-f-dev on GitHub">
+          <img class="github-icon" src="github.svg" alt="" width="36" height="36" draggable="false">
+          GitHub ↗
+        </a>
+      </section>
+      <button class="mobile-play" type="button" aria-label="Play bumper cars">click me<img src="bumper-car.svg" alt="" width="80" height="96" draggable="false"></button>
+      </div>
+      <button class="card exit-play" type="button" aria-label="Return to portfolio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg>
+        <span>Home</span>
+      </button>
     </main>
+    <script>
+      const car = document.querySelector('.site-icon');
+      const cards = Array.from(document.querySelectorAll('.card'), element => ({ element, bounceX: 0, bounceY: 0, velocityX: 0, velocityY: 0, rotation: 0, angularVelocity: 0, lastHit: -1 }));
+      function drawCard(card) {
+        card.element.style.transform = `translate(${card.bounceX}px, ${card.bounceY}px) rotate(${card.rotation}rad)`;
+      }
+      function shape(card) {
+        const rect = card.element.getBoundingClientRect();
+        const c = Math.cos(card.rotation), s = Math.sin(card.rotation);
+        return { x: (rect.left+rect.right)/2, y: (rect.top+rect.bottom)/2,
+          hw: card.element.offsetWidth/2, hh: card.element.offsetHeight/2,
+          u: { x: c, y: s }, v: { x: -s, y: c } };
+      }
+      const outline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      outline.setAttribute('d', 'M80 25c35 0 60 28 60 67v42c0 26-22 43-60 43s-60-17-60-43V92c0-39 25-67 60-67Z');
+      const carOutline = Array.from({length: 64}, (_, i) => {
+        const p = outline.getPointAtLength(outline.getTotalLength()*i/64);
+        return { x: (p.x-80)*100/120, y: (p.y-101)*120/152 };
+      });
+      function carPolygon() {
+        return carOutline.map(p => ({ x: x+p.x*Math.cos(angle)-p.y*Math.sin(angle), y: y+p.x*Math.sin(angle)+p.y*Math.cos(angle) }));
+      }
+      function cardPolygon(box) {
+        const points = [];
+        for (let corner=0; corner<4; corner++) {
+          const theta = corner*Math.PI/2;
+          const cx = (corner===0 || corner===3 ? 1 : -1)*(box.hw-20);
+          const cy = (corner<2 ? 1 : -1)*(box.hh-20);
+          for (let i=0; i<=8; i++) {
+            const a = theta+i*Math.PI/16;
+            const px = cx+20*Math.cos(a), py = cy+20*Math.sin(a);
+            points.push({ x: box.x+px*box.u.x+py*box.v.x, y: box.y+px*box.u.y+py*box.v.y });
+          }
+        }
+        return points;
+      }
+      function collision(a, b) {
+        let depth = Infinity, normal = null;
+        for (const polygon of [a,b]) for (let i=0; i<polygon.length; i++) {
+          const p=polygon[i], q=polygon[(i+1)%polygon.length];
+          const length=Math.hypot(q.x-p.x,q.y-p.y);
+          if (!length) continue;
+          const axis={x: -(q.y-p.y)/length,y: (q.x-p.x)/length};
+          const pa=a.map(v=>v.x*axis.x+v.y*axis.y), pb=b.map(v=>v.x*axis.x+v.y*axis.y);
+          const amin=Math.min(...pa), amax=Math.max(...pa), bmin=Math.min(...pb), bmax=Math.max(...pb);
+          if (amax<=bmin || bmax<=amin) return null;
+          const forward=amax-bmin, backward=bmax-amin;
+          const overlap=Math.min(forward,backward);
+          if (overlap<depth) { depth=overlap; const sign=forward<backward?1:-1; normal={x:axis.x*sign,y:axis.y*sign}; }
+        }
+        return {depth,normal};
+      }
+      const hint = document.querySelector('.driving-hint');
+      const keys = new Set();
+      let active = false, x = 0, y = 0, angle = 0, speed = 0, previous = 0;
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      const mobile = matchMedia('(max-width: 600px)');
+      let playMode = false;
+      document.querySelector('.mobile-play').addEventListener('click', () => {
+        playMode = true;
+        document.documentElement.classList.add('playing');
+        scrollTo(0, 0);
+        activate();
+      });
+      function exitPlay() {
+        playMode = false; active = false; speed = 0; target = null; keys.clear();
+        document.documentElement.classList.remove('playing');
+        document.querySelector('.car-spacer')?.remove();
+        car.removeAttribute('style'); car.setAttribute('aria-pressed', 'false');
+        hint.style.visibility = '';
+        for (const card of cards) {
+          Object.assign(card, { bounceX: 0, bounceY: 0, velocityX: 0, velocityY: 0, rotation: 0, angularVelocity: 0, lastHit: -1 });
+          card.element.style.transform = '';
+        }
+      }
+      document.querySelector('.exit-play').addEventListener('click', exitPlay);
+      mobile.addEventListener('change', exitPlay);
+      function activate() {
+        if (active) return;
+        const bounds = car.getBoundingClientRect();
+        // Keep the card in place when the car leaves the document layout.
+        const spacer = document.createElement('div');
+        spacer.className = 'car-spacer';
+        spacer.style.cssText = 'height:144px;flex-shrink:0';
+        if (!playMode) car.before(spacer);
+        x = bounds.left + bounds.width / 2;
+        y = bounds.top + bounds.height / 2;
+        car.style.position = 'fixed';
+        car.style.margin = '0';
+        active = true;
+        car.setAttribute('aria-pressed', 'true');
+        hint.style.visibility = 'hidden';
+        draw();
+      }
+      function draw() {
+        car.style.left = `${x - 50}px`;
+        car.style.top = `${y - 60}px`;
+        car.style.transform = `rotate(${angle}rad)`;
+      }
+      car.addEventListener('click', activate);
+      let target = null;
+      car.addEventListener('pointerdown', event => {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        activate();
+        car.setPointerCapture(event.pointerId);
+        target = { x: event.clientX, y: event.clientY };
+      });
+      car.addEventListener('pointermove', event => {
+        if (car.hasPointerCapture(event.pointerId)) target = { x: event.clientX, y: event.clientY };
+      });
+      for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) car.addEventListener(type, () => {
+        target = null;
+        speed = 0;
+      });
+      const controls = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'];
+      addEventListener('keydown', event => {
+        if (event.target === car && ['Enter', ' '].includes(event.key)) { event.preventDefault(); activate(); }
+        const key = event.key.toLowerCase();
+        if (active && controls.includes(key)) { event.preventDefault(); keys.add(key); }
+        if (event.key === 'Escape') { keys.clear(); target = null; speed = 0; car.blur(); }
+      });
+      addEventListener('keyup', event => keys.delete(event.key.toLowerCase()));
+      addEventListener('blur', () => { keys.clear(); target = null; speed = 0; });
+      function frame(now) {
+        const dt = Math.min((now - previous) / 1000 || 0, 0.033);
+        previous = now;
+        if (mobile.matches && !playMode) { requestAnimationFrame(frame); return; }
+        if (active) {
+          const turn = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'));
+          let throttle = Number(keys.has('arrowup') || keys.has('w')) - Number(keys.has('arrowdown') || keys.has('s'));
+          angle += turn * 3 * dt;
+          if (target) {
+            const dx = target.x - x, dy = target.y - y;
+            if (Math.hypot(dx, dy) > 12) { angle = Math.atan2(dx, -dy); throttle = 1; }
+            else { throttle = 0; speed = 0; }
+          }
+          speed = Math.max(-190, Math.min(300, (speed + throttle * 480 * dt) * Math.exp(-2 * dt)));
+          const dx = Math.sin(angle) * speed * dt, dy = -Math.cos(angle) * speed * dt;
+          x += dx; y += dy;
+          for (const card of cards) {
+          if (!card.element.getClientRects().length) continue;
+          const box = shape(card);
+          const hit = collision(carPolygon(), cardPolygon(box));
+          if (hit) {
+            const nx = -hit.normal.x, ny = -hit.normal.y;
+            const nearX = x - nx*45, nearY = y - ny*45;
+            x += nx*hit.depth; y += ny*hit.depth;
+            if (now-card.lastHit > 180 && Math.abs(speed) > 15) {
+              const impulse = Math.min(Math.abs(speed) * 1.8, 420);
+              card.velocityX -= nx * impulse; card.velocityY -= ny * impulse;
+              // Torque is the impact force times its offset from the center.
+              const offsetX = nearX - box.x;
+              const offsetY = nearY - box.y;
+              const inertia = (card.element.offsetWidth ** 2 + card.element.offsetHeight ** 2) / 12;
+              if (!reducedMotion.matches) {
+                card.angularVelocity += (offsetY * nx - offsetX * ny) * impulse / inertia;
+                card.angularVelocity = Math.max(-5, Math.min(5, card.angularVelocity));
+              }
+              speed *= -0.55;
+              card.lastHit = now;
+            }
+          }
+          }
+          // The rounded car's visible outline rotates with its heading.
+          const extentX = Math.hypot(50*Math.cos(angle), 60*Math.sin(angle));
+          const extentY = Math.hypot(50*Math.sin(angle), 60*Math.cos(angle));
+          const limitX = Math.max(extentX, document.documentElement.clientWidth-extentX);
+          const limitY = Math.max(extentY, document.documentElement.clientHeight-extentY);
+          if (x < extentX || x > limitX || y < extentY || y > limitY) speed *= -0.5;
+          x = Math.max(extentX, Math.min(limitX, x)); y = Math.max(extentY, Math.min(limitY, y));
+          draw();
+        }
+        for (const card of cards) {
+          // Sliding friction removes momentum without pulling cards home.
+          if (!card.element.getClientRects().length) continue;
+          const friction = Math.exp(-(reducedMotion.matches ? 5 : 1.15) * dt);
+          card.velocityX *= friction;
+          card.velocityY *= friction;
+          card.angularVelocity *= Math.exp(-1.7 * dt);
+          if (Math.abs(card.angularVelocity) < 0.005) card.angularVelocity = 0;
+          card.rotation = (card.rotation + card.angularVelocity * dt) % (Math.PI * 2);
+          if (Math.abs(card.velocityX) < 1) card.velocityX = 0;
+          if (Math.abs(card.velocityY) < 1) card.velocityY = 0;
+          card.bounceX += card.velocityX * dt; card.bounceY += card.velocityY * dt;
+          drawCard(card);
+          const rect = card.element.getBoundingClientRect();
+          // Rounded corners do not occupy the corners of the rotated bounding box.
+          const cornerInset = 20*(Math.abs(Math.cos(card.rotation))+Math.abs(Math.sin(card.rotation))-1);
+          const bounds = { left: rect.left+cornerInset, right: rect.right-cornerInset,
+            top: rect.top+cornerInset, bottom: rect.bottom-cornerInset,
+            width: rect.width-2*cornerInset, height: rect.height-2*cornerInset };
+          const padding = 0;
+          if (bounds.width <= innerWidth - padding * 2) {
+            if (bounds.left < padding) { card.bounceX += padding - bounds.left; card.velocityX = Math.abs(card.velocityX) * 0.5; }
+            if (bounds.right > innerWidth-padding) { card.bounceX -= bounds.right - innerWidth + padding; card.velocityX = -Math.abs(card.velocityX) * 0.5; }
+          }
+          if (bounds.height <= innerHeight - padding * 2) {
+            if (bounds.top < padding) { card.bounceY += padding - bounds.top; card.velocityY = Math.abs(card.velocityY) * 0.5; }
+            if (bounds.bottom > innerHeight-padding) { card.bounceY -= bounds.bottom - innerHeight + padding; card.velocityY = -Math.abs(card.velocityY) * 0.5; }
+          }
+          drawCard(card);
+        }
+        // Equal-mass cards separate along their shallowest overlap and share momentum.
+        for (let i = 0; i < cards.length; i++) {
+          for (let j = i + 1; j < cards.length; j++) {
+            const a = cards[i], b = cards[j];
+            if (!a.element.getClientRects().length || !b.element.getClientRects().length) continue;
+            const ra = shape(a), rb = shape(b);
+            const hit = collision(cardPolygon(ra), cardPolygon(rb));
+            if (!hit) continue;
+            const {depth, normal} = hit;
+            const correction = depth/2;
+            a.bounceX -= normal.x*correction; a.bounceY -= normal.y*correction;
+            b.bounceX += normal.x*correction; b.bounceY += normal.y*correction;
+            const closingSpeed = (a.velocityX-b.velocityX)*normal.x + (a.velocityY-b.velocityY)*normal.y;
+            if (closingSpeed > 0) {
+              const impulse = closingSpeed * 0.75;
+              a.velocityX -= impulse*normal.x; a.velocityY -= impulse*normal.y;
+              b.velocityX += impulse*normal.x; b.velocityY += impulse*normal.y;
+            }
+            for (const card of [a, b]) drawCard(card);
+          }
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    </script>
   </body>
 </html>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="152" viewBox="20 25 120 152" preserveAspectRatio="none" fill="none">
+  <title>Bumper car viewed from above</title>
+  <!-- The thick rubber bumper surrounds the rounded body. -->
+  <path d="M80 25c35 0 60 28 60 67v42c0 26-22 43-60 43s-60-17-60-43V92c0-39 25-67 60-67Z" fill="#18283C"/>
+  <path d="M80 35c29 0 50 24 50 57v40c0 20-18 35-50 35s-50-15-50-35V92c0-33 21-57 50-57Z" fill="#3B82F6" stroke="#93C5FD" stroke-width="3"/>
+  <!-- Rounded front hood and headlights. -->
+  <path d="M48 70c5-15 16-23 32-23s27 8 32 23" stroke="#BFDBFE" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="43" cy="82" rx="5" ry="9" fill="#FEF3C7"/>
+  <ellipse cx="117" cy="82" rx="5" ry="9" fill="#FEF3C7"/>
+  <!-- Open cockpit, steering wheel, and padded bench seat. -->
+  <rect x="45" y="82" width="70" height="66" rx="22" fill="#102E53"/>
+  <circle cx="80" cy="100" r="13" stroke="#E2E8F0" stroke-width="4"/>
+  <path d="m69 94 11 6 11-6m-11 6v13" stroke="#E2E8F0" stroke-width="3" stroke-linecap="round"/>
+  <rect x="51" y="122" width="58" height="20" rx="8" fill="#FB7185"/>
+  <path d="M58 134h44" stroke="#BE3455" stroke-width="3" stroke-linecap="round"/>
+  <path d="M54 156h52" stroke="#BFDBFE" stroke-width="4" stroke-linecap="round"/>
+</svg>
